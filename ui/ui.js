@@ -4,6 +4,32 @@ const $$ = s => [...document.querySelectorAll(s)];
 const hash = new URLSearchParams(location.hash.slice(1));
 if(hash.get('token')){sessionStorage.setItem('life-token',hash.get('token'));history.replaceState(null,'',location.pathname);}
 const token = sessionStorage.getItem('life-token') || '';
+
+// Public-domain passages; only the last quote ID is stored locally, never task data.
+const BOOK_QUOTES = [
+  {id:'laozi-64',text:'千里之行，始于足下。',author:'老子',book:'道德经',chapter:'第六十四章',url:'https://laozi-taoteching.org/ja/chapters/64/'},
+  {id:'laozi-64-tree',text:'合抱之木，生于毫末。',author:'老子',book:'道德经',chapter:'第六十四章',url:'https://laozi-taoteching.org/ja/chapters/64/'},
+  {id:'analects-water',text:'知者乐水，仁者乐山。',author:'孔子',book:'论语',chapter:'雍也篇',url:'https://dict.revised.moe.edu.tw/dictView.jsp?ID=114427&la=1&powerMode=0'},
+  {id:'analects-river',text:'逝者如斯夫，不舍昼夜。',author:'孔子',book:'论语',chapter:'子罕篇',url:'https://confucius-analects.org/zh/quotes/shi-zhe-ru-si/'},
+  {id:'luxun-road',text:'其实地上本没有路，走的人多了，也便成了路。',author:'鲁迅',book:'故乡',chapter:'',url:'https://www.chinawriter.com.cn/n1/2020/0331/c419384-31655463.html'},
+];
+function chooseBookQuote(previousId, random=Math.random){
+  const options=BOOK_QUOTES.filter(q=>q.id!==previousId);
+  return options[Math.min(options.length-1,Math.floor(random()*options.length))];
+}
+function showOpeningQuote(){
+  let previous=null;
+  try{previous=localStorage.getItem('life-last-quote');}catch{}
+  const quote=chooseBookQuote(previous);
+  $('#book-quote').textContent=quote.text;
+  const credit=$('#quote-source');
+  credit.textContent=`— ${quote.author}《${quote.book}》${quote.chapter} ↗`;
+  credit.href=quote.url;
+  credit.setAttribute('aria-label',`${quote.author}《${quote.book}》${quote.chapter}，查看出处`);
+  try{localStorage.setItem('life-last-quote',quote.id);}catch{}
+}
+showOpeningQuote();
+
 let state = {tasks:[],books:[],feeds:[],muted:false};
 let currentPage='today', filter='active', bookFilter='全部', editId=null, deleteId=null, newsLoaded=false, newsRequest=0, toastTimer;
 function el(tag, cls, text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
