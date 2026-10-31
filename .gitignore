@@ -1,0 +1,18 @@
+# Default deny: only these application source files belong on GitHub.
+/*
+!/.gitignore
+!/README.md
+!/app.py
+!/assistant.ico
+!/desktop.py
+!/install.ps1
+!/notify.ps1
+!/uninstall.ps1
+!/tests/
+/tests/*
+!/tests/test_app.py
+!/ui/
+/ui/*
+!/ui/index.html
+!/ui/style.css
+!/ui/ui.js
